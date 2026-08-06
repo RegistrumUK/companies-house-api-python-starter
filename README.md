@@ -62,12 +62,15 @@ Officer, PSC, and filing-history endpoints return `items`, `items_per_page`, `st
 
 This repo is a thin, honest wrapper around the official CH API -- it doesn't hide any of the above, it just handles it correctly. If you'd rather not deal with iXBRL parsing, pagination loops, and your own caching layer at all, [Registrum](https://registrum.co.uk) sits on top of the same official data and returns:
 
-- Structured financials already parsed out of iXBRL (or a clear `data_quality` reason when a company's accounts are PDF-only)
+- Structured financials already parsed out of iXBRL, with a per-response `data_quality` block -- `completeness`, `fields_extracted`, `missing_fields`, `taxonomy_version` -- so you can see exactly how much of a filing was recovered rather than trusting it blindly, and a clear `unavailable_reason` when accounts are PDF-only
+- **ECCTA identity-verification status** per company, ahead of the 18 November 2026 deadline, with `pending` (deadline not yet passed) and `overdue` (deadline missed) as separate counters -- they are not the same thing, and treating verification as a boolean misreports most of the register during the transition
 - Director networks traversed to 2 degrees in one call
-- PSC / beneficial ownership decoded to plain English
+- PSC / beneficial ownership decoded to plain English, including corporate chains walked up to the ultimate owners
 - Built-in caching, so you rarely hit the 600 req/5min ceiling in the first place
 
-Free tier, no credit card: [registrum.co.uk](https://registrum.co.uk) -- 50 calls/month, or browse without a key at all.
+Free tier, no credit card: [registrum.co.uk](https://registrum.co.uk) -- 50 calls/month, or browse without a key at all. Live limits and pricing are always at [`GET /v1/plans`](https://api.registrum.co.uk/v1/plans).
+
+Wiring UK company data into an AI agent instead? See [registrum-mcp-examples](https://github.com/RegistrumUK/registrum-mcp-examples). Prefer Node? [companies-house-api-node-starter](https://github.com/RegistrumUK/companies-house-api-node-starter) is this same kit in JavaScript.
 
 ## License
 
