@@ -58,6 +58,24 @@ Officer, PSC, and filing-history endpoints return `items`, `items_per_page`, `st
 
 `get_latest_accounts_status()` in `example.py` shows the full check.
 
+## Example: who owns this company? (PSC)
+
+[`psc_example.py`](psc_example.py) fetches a company's persons with significant control and walks corporate owners up to the people behind them, using the [Registrum API](https://registrum.co.uk) (a free `REGISTRUM_API_KEY`, sent as an `X-API-Key` header -- not your Companies House key):
+
+```bash
+export REGISTRUM_API_KEY=your_key_here
+python psc_example.py [company_number]
+```
+
+```
+Ownership chain for RAW PROPERTY MANAGEMENT LTD:
+  Wheatley Group Ltd (corporate-entity) -- Owns 75-100% of shares, ... [Companies House 10981633]
+    Mrs Abigail Wheatley (individual) -- Owns 25-50% of shares, ... [identity verification: pending]
+      -> ultimate owner (a person)
+```
+
+Two things it handles that are easy to get wrong: a corporate owner's `company_number` is only set for a confirmed Companies House registration (otherwise it is null and `registry_name` / `registry_number` say where it is registered), and `verification_status` is not a boolean -- `pending` is a deadline not yet passed, `unknown` is no record, and only `overdue` is a missed deadline.
+
 ## Beyond the raw API
 
 This repo is a thin, honest wrapper around the official CH API -- it doesn't hide any of the above, it just handles it correctly. If you'd rather not deal with iXBRL parsing, pagination loops, and your own caching layer at all, [Registrum](https://registrum.co.uk) sits on top of the same official data and returns:
